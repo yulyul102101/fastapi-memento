@@ -6,6 +6,13 @@ from sqlmodel import Session, select
 from app.models.todo import TodoCreate, Todo, TodoUpdate
 
 
+def get_todo_by_id(session: Session, todo_id: uuid.UUID) -> Todo | None:
+    """
+    주어진 todo_id로 Todo 객체를 조회합니다.
+    """
+    return session.get(Todo, todo_id)
+
+
 def create_todo(*,
     session: Session, todo_create: TodoCreate, day_id: uuid.UUID,
 ) -> Todo:

@@ -38,7 +38,6 @@ def finalize_diary_and_analyze_emotion(
     user_id: UUID,
     diary_date: date
 ) -> Diary:
-    # 1. Day + Diary 조회
     day = get_or_create_day(session=session, day_create=diary_date, user_id=user_id)
     diary = crud_diary.get_diary_by_day_id(session=session, day_id=day.id)
     # 임시저장된 diary가 없는 경우도 있으니 라우터에서 save_diary_draft 를 먼저 수행할것
@@ -46,13 +45,13 @@ def finalize_diary_and_analyze_emotion(
     if not diary:
         raise ValueError("Diary not found")
 
-    # content 없고 audio_path만 있다면 → STT 수행
+    # 음성 일기일시 → STT 수행
     if not diary.content and diary.audio_path:
         # TODO STT 수행
         diary.content = "temp"
         session.add(diary)
 
-    # 감정 분석 (텍스트 or STT 결과 기반)
+    # 감정 분석
     if not diary.content:
         raise ValueError("No content available for emotion analysis")
 
