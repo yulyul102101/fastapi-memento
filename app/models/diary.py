@@ -1,3 +1,4 @@
+from __future__ import annotations
 import uuid
 from datetime import date
 
@@ -27,7 +28,7 @@ class Diary(DiaryBase, table=True):
     day_id: uuid.UUID = Field(foreign_key="day.id", unique=True, ondelete="CASCADE")
 
     day: Day = Relationship(back_populates="diary")
-    comment: Comment | None = Relationship(back_populates="diary")
+    comment: "Comment" | None = Relationship(back_populates="diary")
 
 
 class DiaryPublic(DiaryBase):

@@ -3,6 +3,7 @@ from datetime import date
 
 from sqlmodel import Session
 
+from app.crud.comment import create_comment
 from app.models.diary import Diary, DiaryCreate, DiaryUpdate
 from app.crud import diary as crud_diary
 from app.crud.day import get_or_create_day
@@ -58,6 +59,12 @@ def finalize_diary_and_analyze_emotion(
     # TODO 감정 분석 수행
     day.emotion = EmotionEnum.neutral
     day.wrote_diary = True
+
+    # TODO 코멘트 생성
+    content = "temp"
+    comment = create_comment(session=session, diary_id=diary.id, content=content)
+
+    diary.comment = comment
 
     session.add(day)
     session.commit()

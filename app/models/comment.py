@@ -1,8 +1,8 @@
+from __future__ import annotations
 import uuid
 
 from sqlmodel import SQLModel, Field, Relationship
 
-from app.models.diary import Diary
 
 # CommentCreate 시 dait_id path 로 받음
 class Comment(SQLModel, table=True):
@@ -10,7 +10,7 @@ class Comment(SQLModel, table=True):
     diary_id: uuid.UUID = Field(foreign_key="diary.id", unique=True, ondelete="CASCADE")
     content: str = Field()
 
-    diary: Diary = Relationship(back_populates="comment")
+    diary: "Diary" = Relationship(back_populates="comment")
 
 
 class CommentPublic(SQLModel):
