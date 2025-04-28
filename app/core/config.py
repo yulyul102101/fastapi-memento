@@ -1,6 +1,11 @@
 import os
 
+from dotenv import load_dotenv
+
 from pydantic_settings import BaseSettings
+
+
+load_dotenv()
 
 
 class Settings(BaseSettings):
@@ -10,10 +15,12 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7
     SECRET_KEY:         str = os.getenv('SECRET_KEY')
 
-    SMTP_HOST:          int = os.getenv('SMTP_HOST')
-    SMTP_PORT:          int = os.getenv('SMTP_PORT')
-    SMTP_USER:          int = os.getenv('SMTP_USER')
-    SMTP_PASSWORD:      int = os.getenv('SMTP_PASSWORD')
+    SMTP_HOST:          str = os.getenv('SMTP_HOST')
+    SMTP_PORT:          str = os.getenv('SMTP_PORT')
+    SMTP_USER:          str = os.getenv('SMTP_USER')
+    SMTP_PASSWORD:      str = os.getenv('SMTP_PASSWORD')
+
+    TOKEN_URL:          str = "/api/login/access-token"
 
     UPLOAD_DIR:         str = os.getenv('UPLOAD_DIR')
 
