@@ -1,11 +1,17 @@
-from __future__ import annotations
 import uuid
 from datetime import date
+from typing import TYPE_CHECKING, Optional
 
 from sqlmodel import SQLModel, Field, Relationship
 
 from app.models.enums import EmotionEnum
-from app.models.todo import Todo
+from app.models.todo import TodoPublic
+
+
+if TYPE_CHECKING:
+    from app.models.diary import Diary
+    from app.models.todo import Todo, TodoPublic
+    from app.models.user import User
 
 
 class DayBase(SQLModel):
@@ -27,16 +33,19 @@ class DayUpdate(SQLModel):  # id는 따로 받음
 
 
 class Day(DayBase, table=True):
+    __tablename__ = "day"
+
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     user_id: uuid.UUID = Field(foreign_key="user.id", ondelete="CASCADE")
 
-    user: user.User = Relationship(back_populates="days")
-    todos: list[Todo] | None = Relationship(back_populates="day")
-    diary: diary.Diary | None = Relationship(back_populates="day")
+    user: "User" = Relationship(back_populates="days")
+    todos: list["Todo"] | None = Relationship(back_populates="day")
+    diary: Optional["Diary"] = Relationship(back_populates="day")
 
 
 class DayPublic(DayBase):
     id: uuid.UUID
+    todos: list[TodoPublic]
 
 
 class DaysPublic(SQLModel):

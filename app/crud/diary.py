@@ -1,13 +1,21 @@
 import uuid
 
+from sqlalchemy.orm import selectinload
 from sqlmodel import Session, select
 from app.models.diary import Diary, DiaryCreate, DiaryUpdate
 
 
 def get_diary_by_day_id(*, session: Session, day_id: uuid.UUID) -> Diary | None:
-    statement = select(Diary).where(Diary.day_id == day_id)
-    session_day = session.exec(statement).first()
-    return session_day
+    statement = (
+        select(Diary)
+        .options(
+            selectinload(Diary.day),
+            selectinload(Diary.comment)
+        )
+        .where(Diary.day_id == day_id)
+    )
+    diary = session.exec(statement).first()
+    return diary
 
 
 def create_diary(*, session: Session, day_id: uuid.UUID, diary_in: DiaryCreate) -> Diary:
@@ -34,11 +42,16 @@ def delete_diary(*, session: Session, diary: Diary) -> None:    # 안씀
 
 def get_diaries_by_user(*, session: Session, user_id: uuid.UUID) -> list[Diary]:
     from app.models.day import Day
+
     statement = (
         select(Diary)
         .join(Day)
+        .options(
+            selectinload(Diary.day),
+            selectinload(Diary.comment)
+        )
         .where(Day.user_id == user_id)
-        .order_by(Day.date.desc())  # 최신순 정렬 (선택)
+        .order_by(Day.date.desc())
     )
     diaries = session.exec(statement).all()
     return diaries

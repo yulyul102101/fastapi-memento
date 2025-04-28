@@ -4,7 +4,7 @@ from fastapi import APIRouter, HTTPException
 
 from app.api.deps import SessionDep, CurrentUser
 from app.core.security import verify_password, get_password_hash
-from app.crud.user import get_user_by_email, create_user
+from app.crud import user as user_crud
 from app.models.common import Message
 from app.models.user import (
     UserPublic,
@@ -25,7 +25,7 @@ def update_user_me(
     Update own user.
     """
     if user_in.email:
-        existing_user = get_user_by_email(session=session, email=user_in.email)
+        existing_user = user_crud.get_user_by_email(session=session, email=user_in.email)
         if existing_user and existing_user.id != current_user.id:
             raise HTTPException(
                 status_code=409, detail="User with this email already exists"
@@ -85,7 +85,7 @@ def register_user(session: SessionDep, user_in: UserRegister) -> Any:
     """
     Create new user without the need to be logged in.
     """
-    user = get_user_by_email(session=session, email=user_in.email)
+    user = user_crud.get_user_by_email(session=session, email=user_in.email)
     if user:
         raise HTTPException(
             status_code=400,
@@ -93,5 +93,5 @@ def register_user(session: SessionDep, user_in: UserRegister) -> Any:
         )
     # TODO 이메일 인증 필요
     user_create = UserCreate.model_validate(user_in)
-    user = create_user(session=session, user_create=user_create)
+    user = user_crud.create_user(session=session, user_create=user_create)
     return user

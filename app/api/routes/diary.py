@@ -1,15 +1,17 @@
 from uuid import UUID
+from datetime import date
 
 from fastapi import APIRouter, HTTPException
 
 from app.api.deps import SessionDep, CurrentUser
-from app.crud.diary import get_diaries_by_user, get_diary_by_day_id
+from app.crud import day as day_crud
+from app.crud import diary as diary_crud
 from app.models.diary import (
     DiaryCreate,
     DiaryPublic,
     DiariesPublic
 )
-from app.services.diary import save_diary_draft, finalize_diary_and_analyze_emotion
+from app.services import diary as diary_service
 
 
 router = APIRouter(prefix="/diary", tags=["diary"])
@@ -25,7 +27,7 @@ def create_or_update_diary(
     """
     Create or update a diary draft.
     """
-    diary = save_diary_draft(session=session, user_id=current_user.id, diary_in=diary_in)
+    diary = diary_service.save_diary_draft(session=session, user_id=current_user.id, diary_in=diary_in)
     return diary
 
 
@@ -38,21 +40,22 @@ def read_user_diaries(
     """
     Get all diaries written by the user.
     """
-    diaries = get_diaries_by_user(session=session, user_id=current_user.id)
+    diaries = diary_crud.get_diaries_by_user(session=session, user_id=current_user.id)
     return DiariesPublic(data=diaries, count=len(diaries))
 
 
-@router.get("/{day_id}", response_model=DiaryPublic)
+@router.get("/{day_date}", response_model=DiaryPublic)
 def read_diary_by_day(
     *,
     session: SessionDep,
     current_user: CurrentUser,
-    day_id: UUID,
+    day_date: date,
 ) -> DiaryPublic:
     """
     Get a diary by its day ID.
     """
-    diary = get_diary_by_day_id(session=session, day_id=day_id)
+    day = day_crud.get_or_create_day(session=session, day_create=day_date, user_id=current_user.id)
+    diary = diary_crud.get_diary_by_day_id(session=session, day_id=day.id)
     if not diary:
         raise HTTPException(status_code=404, detail="Diary not found")
     return diary
@@ -72,8 +75,8 @@ def finalize_diary(
     - Generate a comment.
     - Mark day as completed.
     """
-    diary = save_diary_draft(session=session, user_id=current_user.id, diary_in=diary_in)
-    diary = finalize_diary_and_analyze_emotion(
+    diary = diary_service.save_diary_draft(session=session, user_id=current_user.id, diary_in=diary_in)
+    diary = diary_service.finalize_diary_and_analyze_emotion(
         session=session,
         user_id=current_user.id,
         diary_date=diary_in.date,

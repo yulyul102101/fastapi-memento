@@ -1,10 +1,12 @@
-from __future__ import annotations
 import uuid
 from datetime import date
+from typing import TYPE_CHECKING
 
 from sqlmodel import SQLModel, Field, Relationship
 
-from app.models import day
+
+if TYPE_CHECKING:
+    from app.models.day import Day
 
 
 class TodoBase(SQLModel):
@@ -22,10 +24,12 @@ class TodoUpdate(SQLModel):
 
 
 class Todo(TodoBase, table=True):
+    __tablename__ = "todo"
+
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     day_id: uuid.UUID = Field(foreign_key="day.id", ondelete="CASCADE")
 
-    day: day.Day = Relationship(back_populates="todos")
+    day: "Day" = Relationship(back_populates="todos")
 
 
 class TodoPublic(TodoBase):

@@ -1,11 +1,15 @@
 import uuid
 from datetime import datetime
+from typing import TYPE_CHECKING
 
 from pydantic import EmailStr
 from sqlmodel import Field, Relationship, SQLModel
 
-from app.models.day import Day
 from app.models.enums import GenderEnum, AgeGroupEnum
+
+
+if TYPE_CHECKING:
+    from app.models.day import Day
 
 
 class UserBase(SQLModel):
@@ -40,12 +44,14 @@ class UpdatePassword(SQLModel):
 
 
 class User(UserBase, table=True):
+    __tablename__ = "user"
+
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     hashed_password: str = Field(max_length=255)
     created_at: datetime = Field(default_factory=datetime.utcnow)
     refresh_token: str = Field(nullable=False)
 
-    days: list[Day] = Relationship(back_populates="user")
+    days: list["Day"] | None = Relationship(back_populates="user")
 
 
 class UserPublic(UserBase):

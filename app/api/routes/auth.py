@@ -6,7 +6,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 from app.core import security
 from app.core.config import settings
-from app.crud.user import authenticate
+from app.crud import user as user_crud
 from app.api.deps import SessionDep
 from app.models.common import Token
 
@@ -21,7 +21,7 @@ def login_access_token(
     """
     OAuth2 compatible token login, get an access token for future requests
     """
-    user = authenticate(
+    user = user_crud.authenticate(
         session=session, email=form_data.username, password=form_data.password
     )
     if not user:
