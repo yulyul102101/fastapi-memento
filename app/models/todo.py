@@ -4,6 +4,8 @@ from datetime import date
 
 from sqlmodel import SQLModel, Field, Relationship
 
+from app.models import day
+
 
 class TodoBase(SQLModel):
     content: str
@@ -23,7 +25,7 @@ class Todo(TodoBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     day_id: uuid.UUID = Field(foreign_key="day.id", ondelete="CASCADE")
 
-    day: "Day" = Relationship(back_populates="todos")
+    day: day.Day = Relationship(back_populates="todos")
 
 
 class TodoPublic(TodoBase):

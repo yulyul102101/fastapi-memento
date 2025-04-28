@@ -10,7 +10,7 @@ class Comment(SQLModel, table=True):
     diary_id: uuid.UUID = Field(foreign_key="diary.id", unique=True, ondelete="CASCADE")
     content: str = Field()
 
-    diary: "Diary" = Relationship(back_populates="comment")
+    diary: diary.Diary = Relationship(back_populates="comment")
 
 
 class CommentPublic(SQLModel):

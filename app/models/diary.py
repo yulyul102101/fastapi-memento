@@ -5,9 +5,6 @@ from datetime import date
 from fastapi import UploadFile
 from sqlmodel import SQLModel, Field, Relationship
 
-from app.models.comment import Comment
-from app.models.day import Day
-
 
 class DiaryBase(SQLModel):
     content: str | None = None
@@ -27,8 +24,8 @@ class Diary(DiaryBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     day_id: uuid.UUID = Field(foreign_key="day.id", unique=True, ondelete="CASCADE")
 
-    day: Day = Relationship(back_populates="diary")
-    comment: "Comment" | None = Relationship(back_populates="diary")
+    day: day.Day = Relationship(back_populates="diary")
+    comment: comment.Comment | None = Relationship(back_populates="diary")
 
 
 class DiaryPublic(DiaryBase):

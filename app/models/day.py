@@ -30,9 +30,9 @@ class Day(DayBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     user_id: uuid.UUID = Field(foreign_key="user.id", ondelete="CASCADE")
 
-    user: "User" = Relationship(back_populates="days")
-    todos: list["Todo"] | None = Relationship(back_populates="day")
-    diary: "Diary" | None = Relationship(back_populates="day")
+    user: user.User = Relationship(back_populates="days")
+    todos: list[Todo] | None = Relationship(back_populates="day")
+    diary: diary.Diary | None = Relationship(back_populates="day")
 
 
 class DayPublic(DayBase):

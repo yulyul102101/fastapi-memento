@@ -45,7 +45,7 @@ class User(UserBase, table=True):
     created_at: datetime = Field(default_factory=datetime.utcnow)
     refresh_token: str = Field(nullable=False)
 
-    days: list["Day"] = Relationship(back_populates="user")
+    days: list[Day] = Relationship(back_populates="user")
 
 
 class UserPublic(UserBase):
