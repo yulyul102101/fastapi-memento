@@ -13,6 +13,9 @@ class Settings(BaseSettings):
 
     # 60 minutes * 24 hours * 7 days = 7 days
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7
+
+    OPENAI_API_KEY:     str = os.getenv('OPENAI_API_KEY')
+
     SECRET_KEY:         str = os.getenv('SECRET_KEY')
 
     SMTP_HOST:          str = os.getenv('SMTP_HOST')
@@ -20,7 +23,7 @@ class Settings(BaseSettings):
     SMTP_USER:          str = os.getenv('SMTP_USER')
     SMTP_PASSWORD:      str = os.getenv('SMTP_PASSWORD')
 
-    TOKEN_URL:          str = "/api/login/access-token"
+    TOKEN_URL:          str = "/api/auth/login/access-token"
 
     UPLOAD_DIR:         str = os.getenv('UPLOAD_DIR')
 

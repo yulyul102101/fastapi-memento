@@ -7,7 +7,6 @@ from app.crud.comment import create_comment
 from app.models.diary import Diary, DiaryCreate, DiaryUpdate
 from app.crud import diary as crud_diary
 from app.crud.day import get_or_create_day
-from app.models.enums import EmotionEnum
 from app.utils.file import save_audio_file
 
 
@@ -48,16 +47,19 @@ def finalize_diary_and_analyze_emotion(
 
     # 음성 일기일시 → STT 수행
     if not diary.content and diary.audio_path:
-        # TODO STT 수행
-        diary.content = "temp"
+        # stt 수행
+        from app.services.ai.speech_to_text import stt
+        content = stt.transcribe_audio(diary.audio_path)
+        diary.content = content
         session.add(diary)
 
-    # 감정 분석
     if not diary.content:
         raise ValueError("No content available for emotion analysis")
 
-    # TODO 감정 분석 수행
-    day.emotion = EmotionEnum.neutral
+    # 감정 분석
+    from app.services.ai.emotion_detection import sa
+    emotion, _ = sa.analyze_emotion(diary.content)
+    day.emotion = emotion
     day.wrote_diary = True
 
     # TODO 코멘트 생성

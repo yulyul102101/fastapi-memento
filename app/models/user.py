@@ -49,7 +49,7 @@ class User(UserBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     hashed_password: str = Field(max_length=255)
     created_at: datetime = Field(default_factory=datetime.utcnow)
-    refresh_token: str = Field(nullable=False)
+    refresh_token: str | None = None
 
     days: list["Day"] | None = Relationship(back_populates="user")
 
