@@ -3,7 +3,7 @@ from datetime import date
 from fastapi import APIRouter, HTTPException
 
 from app.api.deps import SessionDep, CurrentUser
-from app.models.day import DaysPublic, DayPublic, DayUpdate, Day
+from app.models.day import DaysPublic, DayPublic, DayUpdate, Day, DayCreate
 from app.crud import day as day_crud
 
 router = APIRouter(prefix="/day", tags=["day"])
@@ -48,7 +48,12 @@ def update_day_emotion(
     - 해당 Day의 감정
     - 해당 Day에 일기를 썼다고 표시할건지
     """
-    db_day = day_crud.get_or_create_day(session=session, day_create=day_date, user_id=current_user.id)
+    db_day = day_crud.get_or_create_day(
+        session=session,
+        day_create=DayCreate(
+            date=day_date,
+        ),
+        user_id=current_user.id)
     if not db_day or db_day.user_id != current_user.id:
         raise HTTPException(status_code=404, detail="Day not found or not authorized")
 

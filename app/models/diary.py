@@ -11,17 +11,17 @@ from app.models.comment import Comment, CommentPublic
 
 
 class DiaryBase(SQLModel):
+    date: date
     content: str | None = None
     audio_path: str | None = Field(default=None)
 
 
 class DiaryCreate(DiaryBase):
-    date: date
-    audio_file: UploadFile | None = Field(default=None)
+    pass
 
 
 class DiaryUpdate(DiaryBase):
-    audio_file: UploadFile | None = Field(default=None)
+    pass
 
 
 class Diary(DiaryBase, table=True):

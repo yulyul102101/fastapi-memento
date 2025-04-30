@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: baf1172211f0
+Revision ID: f6945e9e8a26
 Revises: 
-Create Date: 2025-04-29 16:04:36.133368
+Create Date: 2025-05-01 00:17:47.468476
 
 """
 from typing import Sequence, Union
@@ -13,7 +13,7 @@ import sqlmodel # 추가
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'baf1172211f0'
+revision: str = 'f6945e9e8a26'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -47,6 +47,7 @@ def upgrade() -> None:
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('diary',
+    sa.Column('date', sa.Date(), nullable=False),
     sa.Column('content', sqlmodel.sql.sqltypes.AutoString(), nullable=True),
     sa.Column('audio_path', sqlmodel.sql.sqltypes.AutoString(), nullable=True),
     sa.Column('id', sa.Uuid(), nullable=False),

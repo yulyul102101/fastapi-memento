@@ -41,7 +41,7 @@ def read_todos_by_date(
     """
     Read todos for a specific date.
     """
-    todos = todo_crud.get_todos_by_user_and_date(session=session, user_id=current_user.id, target_date=date)
+    todos = todo_crud.get_todos_by_user_and_date(session=session, day_date=date, user_id=current_user.id)
     return TodosPublic(data=todos, count=len(todos))
 
 
@@ -60,7 +60,12 @@ def update_todo(
     if not db_todo:
         raise HTTPException(status_code=404, detail="Todo not found")
 
-    updated_todo = todo_service.update_todo_with_day_update(session=session, db_todo=db_todo, todo_in=todo_in, user_id=current_user.id)
+    updated_todo = todo_service.update_todo_with_day_update(
+        session=session,
+        db_todo=db_todo,
+        todo_in=todo_in,
+        user_id=current_user.id
+    )
     return updated_todo
 
 

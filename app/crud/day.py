@@ -8,7 +8,7 @@ from app.models.user import User
 
 
 def get_or_create_day(*, session: Session, day_create: DayCreate, user_id: uuid.UUID) -> Day:
-    statement = select(Day).where(User.id == user_id).where(Day.date == day_create)
+    statement = select(Day).where(User.id == user_id).where(Day.date == day_create.date)
     session_day = session.exec(statement).first()
     if session_day:
         return session_day

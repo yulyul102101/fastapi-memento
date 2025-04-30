@@ -1,8 +1,9 @@
+import os
 import uuid
 
 from sqlalchemy.orm import selectinload
 from sqlmodel import Session, select
-from app.models.diary import Diary, DiaryCreate, DiaryUpdate
+from app.models.diary import Diary, DiaryCreate, DiaryUpdate, DiaryBase
 
 
 def get_diary_by_day_id(*, session: Session, day_id: uuid.UUID) -> Diary | None:
@@ -18,7 +19,12 @@ def get_diary_by_day_id(*, session: Session, day_id: uuid.UUID) -> Diary | None:
     return diary
 
 
-def create_diary(*, session: Session, day_id: uuid.UUID, diary_in: DiaryCreate) -> Diary:
+def create_diary(
+        *,
+        session: Session,
+        day_id: uuid.UUID,
+        diary_in: DiaryBase
+) -> Diary:
     diary = Diary.model_validate(diary_in, update={"day_id": day_id})
     session.add(diary)
     session.commit()
@@ -26,7 +32,13 @@ def create_diary(*, session: Session, day_id: uuid.UUID, diary_in: DiaryCreate) 
     return diary
 
 
-def update_diary(*, session: Session, diary: Diary, diary_in: DiaryUpdate) -> Diary:
+def update_diary(
+        *,
+        session: Session,
+        diary: Diary,
+        diary_in: DiaryBase
+) -> Diary:
+    # TODO 새 audio_file이 있으면 기존 diary의 audio_file 삭재
     update_data = diary_in.model_dump(exclude_unset=True)
     diary.sqlmodel_update(update_data)
     session.add(diary)
