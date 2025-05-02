@@ -36,7 +36,7 @@ def update_todo_with_day_update(*,
 
     todo = todo_crud.update_todo(session=session, db_todo=db_todo, todo_in=todo_in)
 
-    if "is_done" in todo_in:
+    if db_todo.is_done is not previous_done:
         # 완료 → 미완료
         if previous_done is True and todo.is_done is False:
             day.completed_todo = max(0, day.completed_todo - 1)

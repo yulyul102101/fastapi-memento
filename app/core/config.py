@@ -12,7 +12,9 @@ class Settings(BaseSettings):
     SQLALCHEMY_DATABASE_URL: str = os.getenv('SQLALCHEMY_DATABASE_URL')
 
     # 60 minutes * 24 hours * 7 days = 7 days
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7
+    ACCESS_TOKEN_EXPIRE_MINUTES:    int = 60 * 24 * 7
+    # 60 minutes * 24 hours * 30 days = 30 days
+    REFRESH_TOKEN_EXPIRE_DAYS:      int = 60 * 24 * 30
 
     OPENAI_API_KEY:     str = os.getenv('OPENAI_API_KEY')
 

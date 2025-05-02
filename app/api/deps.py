@@ -48,3 +48,30 @@ def get_current_user(session: SessionDep, token: TokenDep) -> User:
 
 
 CurrentUser = Annotated[User, Depends(get_current_user)]
+
+
+def get_user_from_expired_token(session: SessionDep, token: TokenDep) -> User:
+    try:
+        # 만료 여부는 무시하고 디코딩 (verify_exp=False)
+        from app.core import security
+        payload = jwt.decode(
+            token,  # access_token
+            settings.SECRET_KEY,
+            algorithms=[security.ALGORITHM],
+            options={"verify_exp": False}
+        )
+        token_data = TokenPayload(**payload)
+    except (jwt.PyJWTError, ValidationError):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Could not decode expired token",
+        )
+
+    user = session.get(User, UUID(token_data.sub))
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    return user
+
+
+ExpiredUser = Annotated[User, Depends(get_user_from_expired_token)]

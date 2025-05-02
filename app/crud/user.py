@@ -27,6 +27,14 @@ def update_user(*, session: Session, db_user: User, user_in: UserUpdate) -> Any:
     return db_user
 
 
+def update_refresh_token(*, session: Session, db_user: User, refresh_token: str) -> Any:
+    db_user.refresh_token = refresh_token
+    session.add(db_user)
+    session.commit()
+    session.refresh(db_user)
+    return db_user
+
+
 def get_user_by_email(*, session: Session, email: str) -> User | None:
     statement = select(User).where(User.email == email)
     session_user = session.exec(statement).first()

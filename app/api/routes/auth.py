@@ -1,13 +1,14 @@
 from datetime import timedelta
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Form
 from fastapi.security import OAuth2PasswordRequestForm
 
 from app.core import security
 from app.core.config import settings
+from app.core.security import verify_refresh_token
 from app.crud import user as user_crud
-from app.api.deps import SessionDep
+from app.api.deps import SessionDep, ExpiredUser
 from app.models.common import Token
 
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -28,9 +29,48 @@ def login_access_token(
         raise HTTPException(status_code=400, detail="Incorrect email or password")
 
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = security.create_access_token(
+        user.id, expires_delta=access_token_expires
+    )
+    refresh_token = security.create_refresh_token()
+    print(refresh_token)
+
+    user_crud.update_refresh_token(
+        session=session,
+        db_user=user,
+        refresh_token=refresh_token
+    )
+
     token = Token(
-        access_token=security.create_access_token(
-            user.id, expires_delta=access_token_expires
-        )
+        access_token=access_token,
+        refresh_token=refresh_token,
+    )
+    return token
+
+
+@router.post("/refresh", response_model=Token)
+def refresh_access_token(
+    session: SessionDep,
+    refresh_token: Annotated[str, Form()],
+    expired_user: ExpiredUser,
+):
+    if not verify_refresh_token(refresh_token) or expired_user.refresh_token != refresh_token:
+        raise HTTPException(status_code=401, detail="Invalid refresh token")
+
+    access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = security.create_access_token(
+        expired_user.id, expires_delta=access_token_expires
+    )
+    new_refresh_token = security.create_refresh_token()
+
+    user_crud.update_refresh_token(
+        session=session,
+        db_user=expired_user,
+        refresh_token=new_refresh_token
+    )
+
+    token = Token(
+        access_token=access_token,
+        refresh_token=new_refresh_token,
     )
     return token
