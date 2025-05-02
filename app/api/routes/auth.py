@@ -54,6 +54,9 @@ def refresh_access_token(
     refresh_token: Annotated[str, Form()],
     expired_user: ExpiredUser,
 ):
+    """
+    access_token 및 refresh_token 갱신
+    """
     if not verify_refresh_token(refresh_token) or expired_user.refresh_token != refresh_token:
         raise HTTPException(status_code=401, detail="Invalid refresh token")
 
