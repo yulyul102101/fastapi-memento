@@ -4,11 +4,10 @@ from datetime import date
 from sqlmodel import Session, select
 
 from app.models.day import Day, DayCreate, DayUpdate, DayEmotionPublic
-from app.models.user import User
 
 
 def get_or_create_day(*, session: Session, day_create: DayCreate, user_id: uuid.UUID) -> Day:
-    statement = select(Day).where(User.id == user_id).where(Day.date == day_create.date)
+    statement = select(Day).where(Day.user_id == user_id, Day.date == day_create.date)
     session_day = session.exec(statement).first()
     if session_day:
         return session_day
@@ -21,7 +20,7 @@ def get_or_create_day(*, session: Session, day_create: DayCreate, user_id: uuid.
 
 
 def get_day(*, session: Session, day_date: date, user_id: uuid.UUID) -> Day:
-    statement = select(Day).where(User.id == user_id).where(Day.date == day_date)
+    statement = select(Day).where(Day.user_id == user_id, Day.date == day_date)
     session_day = session.exec(statement).first()
     return session_day
 
