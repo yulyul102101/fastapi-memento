@@ -19,8 +19,8 @@ class TodoCreate(TodoBase):
 
 
 class TodoUpdate(SQLModel):
-    content: str | None
-    is_done: bool | None
+    content: str | None = None
+    is_done: bool | None = None
 
 
 class Todo(TodoBase, table=True):
