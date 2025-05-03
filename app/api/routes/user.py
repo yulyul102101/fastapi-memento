@@ -1,6 +1,7 @@
 from typing import Any
 
 from fastapi import APIRouter, HTTPException
+from pydantic import EmailStr
 
 from app.api.deps import SessionDep, CurrentUser
 from app.core.security import verify_password, get_password_hash
@@ -13,6 +14,8 @@ from app.models.user import (
     UserUpdate,
     UpdatePassword
 )
+from app.services import verification as verification_service
+from app.utils.email import send_verification_email
 
 router = APIRouter(prefix="/user", tags=["user"])
 
@@ -87,7 +90,28 @@ def register_user(session: SessionDep, user_in: UserRegister) -> Any:
             status_code=400,
             detail="The user with this email already exists in the system",
         )
-    # TODO 이메일 인증 필요
     user_create = UserCreate.model_validate(user_in)
     user = user_crud.create_user(session=session, user_create=user_create)
     return user
+
+
+@router.post("/send-code")
+async def send_email_code(email: EmailStr):
+    """
+    email로 인증코드를 전송합니다.
+    """
+    code = verification_service.generate_code()
+    await verification_service.store_code(email, code)
+    await send_verification_email(email, code)
+    return {"message": "Verification code sent"}
+
+
+@router.post("/verify-code")
+async def verify_email_code(email: EmailStr, code: str):
+    """
+    입력한 인증코드가 유효한지 확인합니다.
+    """
+    is_valid = await verification_service.validate_code(email, code)
+    if not is_valid:
+        raise HTTPException(status_code=400, detail="Invalid verification code")
+    return {"verified": True}
