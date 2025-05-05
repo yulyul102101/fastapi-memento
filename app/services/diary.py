@@ -76,8 +76,8 @@ def finalize_diary_and_analyze_emotion(
     day.emotion = emotion
     day.wrote_diary = True
 
-    # TODO 코멘트 생성
-    content = "temp"
+    from app.services.ai.comment_generator import comment_generator
+    content = comment_generator.requestAdvice(str(emotion), diary.content)
     comment = create_comment(session=session, diary_id=diary.id, content=content)
 
     diary.comment = comment
