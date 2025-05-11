@@ -28,8 +28,8 @@ class DayCreate(DayBase):
 
 
 class DayUpdate(SQLModel):  # id는 따로 받음
-    emotion: EmotionEnum | None
-    mark_diary_written: bool | None
+    emotion: EmotionEnum | None = None
+    mark_diary_written: bool | None = None
 
 
 class Day(DayBase, table=True):

@@ -18,3 +18,12 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(
+        "app.main:app",
+        reload=True,
+        host="0.0.0.0",
+        port=7777   # 임시 TODO 수정하기
+    )

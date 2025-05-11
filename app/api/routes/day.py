@@ -36,8 +36,8 @@ def read_day(
     return db_day
 
 
-@router.patch("/{day_date}/emotion", response_model=DayPublic)
-def update_day_emotion(
+@router.patch("/{day_date}", response_model=DayPublic)
+def update_day(
     day_date: date,
     day_update: DayUpdate,
     session: SessionDep,
