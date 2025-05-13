@@ -2,7 +2,7 @@ from fastapi import APIRouter
 
 from app.api.routes import auth, comment, day, diary, todo, user
 
-api_router = APIRouter()
+api_router = APIRouter(prefix='/api')
 api_router.include_router(auth.router)
 api_router.include_router(comment.router)
 api_router.include_router(day.router)

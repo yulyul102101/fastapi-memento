@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 
 from dotenv import load_dotenv
 
@@ -27,6 +28,7 @@ class Settings(BaseSettings):
 
     TOKEN_URL:          str = "/api/auth/login/access-token"
 
+    BASE_DIR:           str = str(Path(__file__).resolve().parent.parent.parent)
     UPLOAD_DIR:         str = os.getenv('UPLOAD_DIR')
 
 
