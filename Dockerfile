@@ -6,12 +6,10 @@ ENV PYTHONUNBUFFERED 1
 WORKDIR /home/ubuntu/fastapi-memento
 
 COPY requirements.txt .
+
 RUN pip install --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-CMD ["gunicorn", "app.main:app", \
-     "--workers", "4", \
-     "--worker-class", "uvicorn.workers.UvicornWorker", \
-     "--bind", "unix:/var/run/backend.sock"]
+ENTRYPOINT ["tail", "-f", "/dev/null"]

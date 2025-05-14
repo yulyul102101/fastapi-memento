@@ -12,7 +12,6 @@ services:
       - ./certs:/etc/nginx/certs:ro
       - ./uploads:/app/uploads:ro
       - /etc/letsencrypt:/etc/letsencrypt:ro
-      - /var/run/backend.sock:/var/run/backend.sock
     depends_on:
       - backend
     restart: always
@@ -26,7 +25,9 @@ services:
       - .env
     volumes:
       - ./uploads:/home/ubuntu/fastapi-memento/uploads
-      - /var/run/backend.sock:/var/run/backend.sock
+      - .:/home/ubuntu/fastapi-memento
+    ports:
+      - "8000:8000"
     depends_on:
       - mysql
       - redis
