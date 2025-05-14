@@ -11,6 +11,7 @@ services:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./certs:/etc/nginx/certs:ro
       - ./uploads:/app/uploads:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
       - /var/run/backend.sock:/var/run/backend.sock
     depends_on:
       - backend
