@@ -24,7 +24,7 @@ def create_or_update_diary(
     *,
     session:        SessionDep,
     current_user:   CurrentUser,
-    diary_date:     date,
+    diary_date:     Annotated[date, Form()],
     content:        Annotated[str | None, Form()] = None,
     audio_file:     Annotated[UploadFile | None, File()] = None
 ) -> DiaryPublic:
@@ -83,7 +83,7 @@ def finalize_diary(
     *,
     session:        SessionDep,
     current_user:   CurrentUser,
-    diary_date:     date,
+    diary_date:     Annotated[date, Form()],
     content:        Annotated[str | None, Form()] = None,
     audio_file:     Annotated[UploadFile | None, File()] = None
 ) -> DiaryPublic:
