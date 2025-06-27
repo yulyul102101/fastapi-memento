@@ -6,6 +6,7 @@ from pydantic import EmailStr
 from app.api.deps import SessionDep, CurrentUser
 from app.core.security import verify_password, get_password_hash
 from app.crud import user as user_crud
+from app.services import user as user_service
 from app.models.common import Message
 from app.models.user import (
     UserPublic,
@@ -74,8 +75,7 @@ def delete_user_me(session: SessionDep, current_user: CurrentUser) -> Any:
     """
     Delete own user.
     """
-    session.delete(current_user)
-    session.commit()
+    user_service.delete_user_with_dependencies(session=session, user=current_user)
     return Message(message="User deleted successfully")
 
 

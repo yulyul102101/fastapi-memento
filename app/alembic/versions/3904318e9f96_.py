@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: f6945e9e8a26
+Revision ID: 3904318e9f96
 Revises: 
-Create Date: 2025-05-01 00:17:47.468476
+Create Date: 2025-05-24 03:30:52.374885
 
 """
 from typing import Sequence, Union
@@ -13,7 +13,7 @@ import sqlmodel # 추가
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'f6945e9e8a26'
+revision: str = '3904318e9f96'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -48,7 +48,7 @@ def upgrade() -> None:
     )
     op.create_table('diary',
     sa.Column('date', sa.Date(), nullable=False),
-    sa.Column('content', sqlmodel.sql.sqltypes.AutoString(), nullable=True),
+    sa.Column('content', sqlmodel.sql.sqltypes.AutoString(length=6000), nullable=True),
     sa.Column('audio_path', sqlmodel.sql.sqltypes.AutoString(), nullable=True),
     sa.Column('id', sa.Uuid(), nullable=False),
     sa.Column('day_id', sa.Uuid(), nullable=False),
@@ -61,6 +61,7 @@ def upgrade() -> None:
     sa.Column('is_done', sa.Boolean(), nullable=False),
     sa.Column('id', sa.Uuid(), nullable=False),
     sa.Column('day_id', sa.Uuid(), nullable=False),
+    sa.Column('created_at', sa.DateTime(), nullable=False),
     sa.ForeignKeyConstraint(['day_id'], ['day.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )

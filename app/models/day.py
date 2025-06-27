@@ -3,6 +3,7 @@ from datetime import date
 from typing import TYPE_CHECKING, Optional
 
 from sqlmodel import SQLModel, Field, Relationship
+from sqlalchemy.orm import Relationship as SA_Relationship
 
 from app.models.enums import EmotionEnum
 from app.models.todo import TodoPublic
@@ -39,7 +40,10 @@ class Day(DayBase, table=True):
     user_id: uuid.UUID = Field(foreign_key="user.id", ondelete="CASCADE")
 
     user: "User" = Relationship(back_populates="days")
-    todos: list["Todo"] | None = Relationship(back_populates="day")
+    todos: list["Todo"] | None = Relationship(
+        back_populates="day",
+        sa_relationship=SA_Relationship(order_by="Todo.created_at")  # 정렬 기준을 여기서 지정
+    )
     diary: Optional["Diary"] = Relationship(back_populates="day")
 
 

@@ -3,8 +3,10 @@ from typing import Annotated
 from datetime import date
 
 from fastapi import APIRouter, HTTPException, Form, UploadFile, File
+from starlette.responses import FileResponse
 
 from app.api.deps import SessionDep, CurrentUser
+from app.core.config import settings
 from app.crud import day as day_crud
 from app.crud import diary as diary_crud
 from app.models.day import DayCreate
@@ -111,3 +113,33 @@ def finalize_diary(
         ),
     )
     return diary
+
+
+@router.get("/file/{diary_id}")
+def get_audio_by_diary_id(
+    *,
+    session: SessionDep,
+    current_user: CurrentUser,
+    diary_id: str
+):
+    """
+    diary_id에 해당하는 Diary의 오디오 파일 반환.
+    """
+    diary = diary_crud.get_diary_by_id(session=session, diary_id=diary_id)
+
+    if not diary:
+        raise HTTPException(status_code=404, detail="Diary not found")
+
+    if not diary.audio_path:
+        raise HTTPException(status_code=404, detail="No audio file associated with this diary")
+
+    full_path = os.path.join(settings.BASE_DIR, diary.audio_path)
+
+    if not os.path.isfile(full_path):
+        raise HTTPException(status_code=404, detail="Audio file not found")
+
+    return FileResponse(
+        path=full_path,
+        media_type="audio/wav",
+        filename=os.path.basename(full_path)
+    )

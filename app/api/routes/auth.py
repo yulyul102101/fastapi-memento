@@ -6,10 +6,11 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 from app.core import security
 from app.core.config import settings
-from app.core.security import verify_refresh_token
+from app.core.security import verify_refresh_token, get_password_hash
 from app.crud import user as user_crud
 from app.api.deps import SessionDep, ExpiredUser
-from app.models.common import Token
+from app.models.common import Token, Message
+from app.models.user import ResetPassword
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -76,3 +77,16 @@ def refresh_access_token(
         refresh_token=new_refresh_token,
     )
     return token
+
+
+@router.post("/reset-password")
+def reset_password(
+    session: SessionDep,
+    body: ResetPassword,
+):
+    user = user_crud.get_user_by_email(session=session, email=body.email)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    user.hashed_password = get_password_hash(body.new_password)
+    session.commit()
+    return Message(message="Password reset successful")

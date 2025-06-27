@@ -33,10 +33,12 @@ def save_diary_draft(   # 임시 저장
 
     # 오디오 저장 처리
     if audio_file:
+        # stt 수행
+        from app.services.ai.speech_to_text import stt
         diary_in.audio_path = save_audio_file(audio_file, user_id, diary_in.date)
-    else:
-        diary_in.content = content
-
+        content = stt.transcribe_audio(diary_in.audio_path)
+    
+    diary_in.content = content
     day.wrote_diary = True
 
     if existing_diary:

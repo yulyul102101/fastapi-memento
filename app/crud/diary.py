@@ -6,6 +6,10 @@ from sqlmodel import Session, select
 from app.models.diary import Diary, DiaryCreate, DiaryUpdate, DiaryBase
 
 
+def get_diary_by_id(session: Session, diary_id: str) -> Diary | None:
+    return session.get(Diary, uuid.UUID(diary_id))
+
+
 def get_diary_by_day_id(*, session: Session, day_id: uuid.UUID) -> Diary | None:
     statement = (
         select(Diary)

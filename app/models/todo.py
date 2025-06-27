@@ -1,5 +1,5 @@
 import uuid
-from datetime import date
+from datetime import date, datetime
 from typing import TYPE_CHECKING
 
 from sqlmodel import SQLModel, Field, Relationship
@@ -28,6 +28,7 @@ class Todo(TodoBase, table=True):
 
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     day_id: uuid.UUID = Field(foreign_key="day.id", ondelete="CASCADE")
+    created_at: datetime = Field(default_factory=datetime.utcnow)
 
     day: "Day" = Relationship(back_populates="todos")
 

@@ -46,7 +46,11 @@ def get_todos_by_user_and_date(*,
     if not day:
         return []
 
-    todo_statement = select(Todo).where(Todo.day_id == day.id)
+    todo_statement = (
+        select(Todo)
+        .where(Todo.day_id == day.id)
+        .order_by(Todo.created_at.asc())
+    )
     todos = session.exec(todo_statement).all()
 
     return todos

@@ -43,6 +43,11 @@ class UpdatePassword(SQLModel):
     new_password: str = Field(min_length=8, max_length=40)
 
 
+class ResetPassword(SQLModel):
+    email: EmailStr = Field(max_length=255)
+    new_password: str = Field(min_length=8, max_length=40)
+
+
 class User(UserBase, table=True):
     __tablename__ = "user"
 

@@ -12,7 +12,7 @@ from app.models.comment import Comment, CommentPublic
 
 class DiaryBase(SQLModel):
     date: date
-    content: str | None = None
+    content: str | None = Field(default=None, max_length=6000)
     audio_path: str | None = Field(default=None)
 
 

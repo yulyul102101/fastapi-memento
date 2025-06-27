@@ -14,7 +14,7 @@ class Comment(SQLModel, table=True):
 
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     diary_id: uuid.UUID = Field(foreign_key="diary.id", unique=True, ondelete="CASCADE")
-    content: str = Field()
+    content: str = Field(max_length=1000)
 
     diary: "Diary" = Relationship(back_populates="comment")
 
